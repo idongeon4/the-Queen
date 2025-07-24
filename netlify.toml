@@ -1,5 +1,0 @@
-# netlify.toml
-
-[build]
-  # 함수가 저장된 디렉토리를 지정합니다.
-  functions = "netlify/functions"
