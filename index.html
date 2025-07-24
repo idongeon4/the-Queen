@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; background-color: white; }
+        body { display: flex; flex-direction: column; }
+        .container { flex-grow: 1; display: flex; flex-direction: column; text-align: center; }
+        img { width: 100%; height: auto; display: block; }
+        .content-wrapper { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        .coordinates { font-size: 16px; word-wrap: break-word; max-width: 100%; }
+        .answer-box { margin-top: 20px; }
+        #answer { padding: 8px; font-size: 16px; }
+        #submitBtn { padding: 8px 16px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://i.postimg.cc/nzxLPMjh/img1753310297175.jpg" alt="Description">
+        <div class="content-wrapper">
+            <div class="coordinates">
+                <p>51.577161,-1.566517→41.438059,-112.668997→25.119274,55.133113→27.380450,33.632141→-20.937757,164.658423</p>
+            </div>
+            <div class="answer-box">
+                <label for="answer">정답:</label>
+                <input type="text" id="answer" placeholder="정답을 입력하세요">
+                <button id="submitBtn">제출</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('submitBtn').addEventListener('click', async function() {
+            const answer = document.getElementById('answer').value;
+            if (!answer) {
+                alert('정답을 입력해주세요.');
+                return;
+            }
+            try {
+                const response = await fetch('/.netlify/functions/check-answer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ answer: answer })
+                });
+                const result = await response.json();
+                if (result.correct) {
+                    window.location.href = result.nextUrl;
+                } else {
+                    alert('Wrong');
+                }
+            } catch (error) {
+                alert('오류가 발생했습니다.');
+            }
+        });
+    </script>
+</body>
+</html>
