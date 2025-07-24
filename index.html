@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinates</title>
+    <style>
+        body {
+            background-color: #FFFFFF; /* 흰색 배경 */
+            color: #000000; /* 기본 글씨 검정색 */
+            font-family: 'Helvetica', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .coordinates {
+            font-size: 1.1rem;
+            word-wrap: break-word; /* 긴 텍스트 자동 줄바꿈 */
+            margin-bottom: 2rem;
+            max-width: 800px; /* 최대 너비 설정 */
+        }
+        .puzzle-image {
+            max-width: 90%;
+            height: auto;
+            margin-bottom: 2rem;
+        }
+        #answerBox {
+            padding: 10px;
+            font-size: 1.2rem;
+            width: 250px;
+            text-align: center;
+            border: 2px solid #cccccc;
+            background-color: #f9f9f9;
+            color: #000000;
+            margin-bottom: 1rem;
+        }
+        #submitBtn {
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            background-color: #4CAF50; /* 초록색 계열 버튼 */
+            color: white;
+            border: none;
+            font-weight: bold;
+        }
+        #message {
+            margin-top: 1rem;
+            height: 20px;
+            color: #f44336; /* 빨간색 계열 */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <p class="coordinates">
+        51.577161,-1.566517→41.438059,-112.668997→25.119274,55.133113→27.380450,33.632141→-20.937757,164.658423
+    </p>
+
+    <img src="https://i.postimg.cc/nzxLPMjh/img1753310297175.jpg" alt="Puzzle Image" class="puzzle-image">
+
+    <input type="text" id="answerBox" placeholder="Enter the answer">
+    <br>
+    <button id="submitBtn">SUBMIT</button>
+
+    <div id="message"></div>
+
+    <script>
+        const answerBox = document.getElementById('answerBox');
+        const submitBtn = document.getElementById('submitBtn');
+        const messageDiv = document.getElementById('message');
+
+        async function checkAnswer() {
+            const userAnswer = answerBox.value;
+            if (!userAnswer) return;
+
+            try {
+                // 이번에는 'checkAnswer2'라는 다른 서버 함수를 호출합니다.
+                const response = await fetch('/.netlify/functions/checkAnswer2', {
+                    method: 'POST',
+                    body: JSON.stringify({ answer: userAnswer })
+                });
+
+                const data = await response.json();
+
+                if (data.correct) {
+                    window.location.href = 'https://unique-tulumba-8d7de8.netlify.app';
+                } else {
+                    messageDiv.textContent = 'INCORRECT';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error checking answer.';
+            }
+        }
+        
+        submitBtn.addEventListener('click', checkAnswer);
+        answerBox.addEventListener('keyup', e => e.key === 'Enter' && checkAnswer());
+    </script>
+</body>
+</html>
